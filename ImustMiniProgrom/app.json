@@ -1,0 +1,12 @@
+{
+  "pages":[
+    "pages/news/list",
+    "pages/news/detail"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "易界并购",
+    "navigationBarTextStyle":"black"
+  }
+}

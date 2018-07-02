@@ -1,0 +1,55 @@
+<!--pages/news/list.wxml-->
+
+<view class="container">
+  <!-- nav bar begin -->
+  <view id="newsNavBar">
+    <view id="newsNavBarSearch">
+      <button class="newsNavBarButton" bindtap="handleClickSearchButton">
+        <image src="../assets/images/20_search.png" mode="aspectFill"></image>
+      </button>
+    </view>
+    <view id="newsNavBarChannel">
+      <scroll-view scroll-x id="newsNavBarChannelList">
+        <view class="newsNavBarChannelListItem active">推荐</view>
+        <view class="newsNavBarChannelListItem">头条</view>
+        <view class="newsNavBarChannelListItem">情报</view>
+        <view class="newsNavBarChannelListItem">融资</view>
+        <view class="newsNavBarChannelListItem">并购</view>
+        <view class="newsNavBarChannelListItem">头条</view>
+        <view class="newsNavBarChannelListItem">情报</view>
+        <view class="newsNavBarChannelListItem">融资</view>
+        <view class="newsNavBarChannelListItem">并购</view>
+      </scroll-view>
+    </view>
+    <view id="newsNavBarOthers">
+      <button class="newsNavBarButton" id="newsNavBarCustomizeChannel" bindtap="handleClickCustomizeChannelButton">
+        <image src="../assets/images/20_bars.png" mode="aspectFill"></image>
+      </button>
+      <button class="newsNavBarButton" id="newsNavBarUser" bindtap="handleClickUserButton">
+        <image src="../assets/images/20_user.png" mode="aspectFill"></image>
+      </button>
+    </view>
+  </view>
+  <!-- nav bar end -->
+
+  <!-- news list begin -->
+  <view class="contain">
+    <view class="news">
+      <view wx:for="{{listData}}" wx:key="{{index}}" bindtap="newsClick">
+        <view class="news_item {{item.news_type['0']==='新闻' ? 'big' : ''}}">
+          <view class="news_thumb">
+            <image src="{{item.image_small_banner}}" mode="aspectFill"></image>
+          </view>
+          <view class="news_info">
+            <view class="news_title">{{item.title_zh}}</view>
+            <view class="news_meta">
+              <view class="news_type">{{item.news_type[0]}}</view>
+              <view class="news_date">{{item.published_at}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- news list end -->
+</view>

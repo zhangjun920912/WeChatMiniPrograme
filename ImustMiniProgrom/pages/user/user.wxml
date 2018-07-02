@@ -1,0 +1,5 @@
+<!--pages/user/user.wxml-->
+
+<view class="container">
+user page
+</view>
