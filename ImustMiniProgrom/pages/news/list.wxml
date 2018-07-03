@@ -1,5 +1,4 @@
 <!--pages/news/list.wxml-->
-
 <view class="container">
   <!-- nav bar begin -->
   <view id="newsNavBar">
@@ -35,10 +34,10 @@
   <!-- news list begin -->
   <view class="contain">
     <view class="news">
-      <view wx:for="{{listData}}" wx:key="{{index}}" bindtap="newsClick">
-        <view class="news_item {{item.news_type['0']==='新闻' ? 'big' : ''}}">
+      <view wx:for="{{listData}}" wx:key="{{index}}" >
+        <view class="news_item {{item.news_type['0']!=='新闻'&&item.news_type['0']!=='情报'&&item.news_type['0']!=='报告' ? 'big' : ''}}" bindtap="newsClick" data-id="{{item.id}}">
           <view class="news_thumb">
-            <image src="{{item.image_small_banner}}" mode="aspectFill"></image>
+            <image src="{{item.image_large_banner}}" mode="aspectFill"></image>
           </view>
           <view class="news_info">
             <view class="news_title">{{item.title_zh}}</view>
@@ -50,6 +49,7 @@
         </view>
       </view>
     </view>
+    <text wx:if="{{isLoadingMore}}" class="footer_loading_more">加载更多...</text>
   </view>
   <!-- news list end -->
 </view>

@@ -1,0 +1,14 @@
+<!--logs.wxml-->
+<view class="container news-title">
+  {{detail.meta_info.title}}
+</view>
+<view class="container news-date">
+  {{shortday}}
+</view>
+<view class="container news-content">
+  <import src="../../wxParse/wxParse.wxml"/>
+  <template is="wxParse" data="{{wxParseData:content.nodes}}"/>
+</view>
+
+
+
