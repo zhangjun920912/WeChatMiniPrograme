@@ -1,7 +1,10 @@
 {
   "pages":[
     "pages/news/list",
-    "pages/news/detail"
+    "pages/news/detail",
+    "pages/news/customizeChannel",
+    "pages/search/search",
+    "pages/user/user"
   ],
   "window":{
     "backgroundTextStyle":"light",

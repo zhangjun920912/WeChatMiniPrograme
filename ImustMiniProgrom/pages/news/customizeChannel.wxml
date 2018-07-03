@@ -1,5 +1,32 @@
 <!--pages/news/customizeChannel.wxml-->
 
 <view class="container">
-customize channel page
+  <view id="channel_select" class="channel_block">
+    <view class="channel_title_row">
+      <view class="channel_title">已选频道</view>
+      <view id="channel_edit_btn">{{ editing ? '确定' : '编辑' }}</view>
+    </view>
+    <view class="channel_list {{editing ? 'edit' : ''}}">
+      <button class="channel_item">推荐</button>
+      <button class="channel_item">头条</button>
+      <button class="channel_item">并购</button>
+      <button class="channel_item">融资</button>
+      <button class="channel_item">情报</button>
+      <button class="channel_item">研究</button>
+      <button class="channel_item">海外</button>
+      <button class="channel_item">国内</button>
+    </view>
+  </view>
+  <view id="channel_more" class="channel_block">
+    <view class="channel_title_row">
+      <view class="channel_title">更多频道</view>
+      <view class="channel_title_desc">点击添加频道</view>
+    </view>
+    <view class="channel_list">
+      <button class="channel_item">合资公司</button>
+      <button class="channel_item">工业自动化</button>
+      <button class="channel_item">新能源汽车</button>
+    </view>
+  </view>
+  <button class="btn_normal">确定</button>
 </view>

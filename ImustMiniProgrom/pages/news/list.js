@@ -1,5 +1,5 @@
 // pages/news/list.js
-import { currentHost } from '../tools/network.js';
+import { currentHost, fetchData } from '../tools/network.js';
 import { showTimeStream } from '../tools/tools.js';
 
 Page({
@@ -10,46 +10,11 @@ Page({
   data: {
     activeChannel: undefined,
     channelData: undefined,
-    listData: [
-      {
-        author: null,
-        cdn_thumb: 'https://assets.dealglobe.com/uploads/platform/procedure/featured_image/173733/tesla.jpg',
-        content_type: ['Fund Raising'],
-        id: 173733,
-        image_large_banner: 'https://assets.dealglobe.com/uploads/platform/procedure/featured_image/173733/large_banner_tesla.jpg',
-        image_small_banner: 'https://assets.dealglobe.com/uploads/platform/procedure/featured_image/173733/small_banner_tesla.jpg',
-        industries: ['制造业'],
-        is_recommended_news: 'No',
-        lock: 0,
-        news_type: ['新闻'],
-        published_at: '2018-07-02T07:16:10.944+00:00',
-        sectors: ['汽车及零部件', '新能源汽车及零部件'],
-        tags: ['美国'],
-        thumb: 'https://dealglobe.com/uploads/platform/procedure/featured_image/173733/tesla.jpg',
-        title_en: '',
-        title_zh: '松下考虑对特斯拉超级工厂追加投资',
-        wechat_official_account: null
-      },
-      {
-        author: null,
-        cdn_thumb: 'https://assets.dealglobe.com/uploads/platform/procedure/featured_image/173732/%E6%98%93%E7%95%8C%E6%83%85%E6%8A%A5%E7%B2%BE%E9%80%89-%E6%96%B9%E5%9B%BE.jpg',
-        content_type: ['M&A', 'Fund Raising', '融资'],
-        id: 173732,
-        image_large_banner: 'https://assets.dealglobe.com/uploads/platform/procedure/featured_image/173732/large_banner_%E6%98%93%E7%95%8C%E6%83%85%E6%8A%A5%E7%B2%BE%E9%80%89-%E6%96%B9%E5%9B%BE.jpg',
-        image_small_banner: 'https://assets.dealglobe.com/uploads/platform/procedure/featured_image/173732/small_banner_%E6%98%93%E7%95%8C%E6%83%85%E6%8A%A5%E7%B2%BE%E9%80%89-%E6%96%B9%E5%9B%BE.jpg',
-        industries: ['其他行业'],
-        is_recommended_news: 'No',
-        lock: 0,
-        news_type: ['其他'],
-        published_at: '2018-07-02T03:48:32.507+00:00',
-        sectors: ['物流运输', '矿业', '金融'],
-        tags: ['易界午间资讯'],
-        thumb: 'https://dealglobe.com/uploads/platform/procedure/featured_image/173732/%E6%98%93%E7%95%8C%E6%83%85%E6%8A%A5%E7%B2%BE%E9%80%89-%E6%96%B9%E5%9B%BE.jpg',
-        title_en: '',
-        title_zh: '【易界午间资讯】阿里巴巴将收购土耳其时尚电商Trendyol部分股权；英国Centricus与招商局等中资企业拟设立150亿美元科技基金',
-        wechat_official_account: null
-      }
-    ]
+    currentTab: 'subscribe',
+    listData: null,
+    listTotalPageCount:0,
+    listCurrentPageCount:0,
+    isLoadingMore:false
   },
 
   /**
@@ -57,26 +22,20 @@ Page({
    */
   onLoad: function (options) {
     this.getChannelData();
+    this.getNewsListData();
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-    let newListData = Object.assign({}, this.data.listData);
-    for (let i in newListData){
-      newListData[i].published_at = showTimeStream(newListData[i].published_at)
-    }
-    this.setData({listData: newListData});
+    
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
-    var aa = currentHost()
-    console.log(aa.host + aa.cdnHost)
   },
 
   /**
@@ -104,7 +63,7 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-  
+    this.fetchNextPage()
   },
 
   /**
@@ -115,7 +74,73 @@ Page({
   },
 
   getChannelData: function() {
-    // fetch data
+    wx.request({
+      url: currentHost().cdnHost + '/api/v5/configurations/system_default',
+      method: 'GET',
+      dataType: 'json',
+      success: function(res) {
+        console.log(res);
+      }
+    })
+  },
+
+  //first load news list data
+  getNewsListData: function(){
+    var params = {'tab':this.data.currentTab}
+    fetchData('/api/v6/news/first_page', true, params,'GET',null,
+      (res)=>{
+        var newsListData = res.data ? res.data.news : null
+        var newsListMeta = res.data ? res.data.meta : null
+        if(newsListData){
+          for (let i in newsListData) {
+            newsListData[i].published_at = showTimeStream(newsListData[i].published_at)
+          }
+        }
+        this.setData({
+          listData: newsListData,
+          listTotalPageCount: newsListMeta ? newsListMeta.total_page_count : 0,
+          listCurrentPageCount: newsListMeta ? newsListMeta.current_page : 0,
+        })
+      },
+      (err)=>{
+
+      }
+    )
+  },
+
+  //fetch next page
+  fetchNextPage: function(){
+    if(this.data.isLoadingMore) return;
+    if (this.data.listCurrentPageCount <= 1 || this.data.listTotalPageCount <= 1){
+      this.setData({isLoadingMore:false});
+      return;
+    }
+    //load more
+    this.setData({isLoadingMore:true});
+    var params = { 'tab': this.data.currentTab };
+    params['page'] = this.data.listCurrentPageCount - 1;
+    fetchData('/api/v6/news.json', true, params, 'GET', null,
+      (res) => {
+        var newsListData = this.data.listData.concat();
+        var currentNewsListData = res.data ? res.data.news : null
+        var newsListMeta = res.data ? res.data.meta : null
+        if (currentNewsListData) {
+          for (let i in currentNewsListData) {
+            currentNewsListData[i].published_at = showTimeStream(currentNewsListData[i].published_at)
+          }
+          newsListData = newsListData.concat(currentNewsListData)
+        }
+        this.setData({
+          listData: newsListData,
+          listTotalPageCount: newsListMeta ? newsListMeta.total_page_count : 0,
+          listCurrentPageCount: newsListMeta ? newsListMeta.current_page : 0,
+          isLoadingMore: false
+        })
+      },
+      (err) => {
+
+      }
+    )
   },
 
   handleClickSearchButton: function() {
@@ -136,7 +161,14 @@ Page({
     })
   },
 
-  newsClick: function () {
-    console.log('点我')
+  newsClick: function (e) {
+    var that = this;
+    that.setData({
+      id: e.currentTarget.dataset.id
+    })
+    console.log('点我:', that.data.id);
+    wx.redirectTo({
+      url: '/pages/news/detail?id=' + that.data.id,
+    })
   }
 })

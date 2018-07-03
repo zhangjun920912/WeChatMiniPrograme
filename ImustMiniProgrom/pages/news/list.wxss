@@ -2,11 +2,20 @@
 .contain {
   display: flex;
   width: 100%;
+  padding-top: 36px;
+  flex-direction: column;
 }
 
 .news {
   margin-top: 0rpx;
   width: 100%;
+}
+
+.footer_loading_more {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: center;
 }
 
 #newsNavBar{
@@ -15,6 +24,9 @@
   width: 100%;
   border-bottom: 1px solid #e5e5e5;
   justify-content: center;
+  position: fixed;
+  background-color: #fff;
+  top: 0;
 }
 
 #newsNavBarSearch{
@@ -132,6 +144,11 @@
   border-radius: 3px;
 }
 
+.news_thumb image{
+  width: 82px;
+  height: 62px;
+}
+
 .news_item.big{
   display: block;
 }
@@ -143,6 +160,7 @@
   height: 153px;
 }
 
-.news_thumb image{
+.big .news_thumb image{
   width: 100%;
+  height: 100%;
 }
